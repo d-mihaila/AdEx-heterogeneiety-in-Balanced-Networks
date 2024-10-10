@@ -1,0 +1,166 @@
+%YAML 1.2
+---
+# NOTE TO SELF: the +eta is added from the oridingal AdEx equations following the example
+# of the IK neurons -- it's necessary for the heterogeneiety expression
+
+# operator without any synaptic input
+simple_op:
+  base: OperatorTemplate
+  equations:
+    # rate r is written as mean(spike) -- following the example of the ik model
+    - "v' = (g*(v - v_r) + g*delta_T*exp((v - v_theta)/delta_T) - w + eta + I_ext) / C"
+    - "w' = (a*(v-v_r) - w + b*tau_w*mean(spike)) / tau_w"
+  variables:
+    g: 30.0 
+    eta : 0.0
+    v: variable(-60.0)
+    v_r: -70.6
+    delta_T: 2.0 
+    v_theta: -40.0
+    w: variable(0.0)
+    I_ext: input(0.0)
+    C: 281.0 
+    a: 4 
+    b: 80.5 # from nA --> pA in Gernstner's book
+    tau_w: 144.0 
+    spike: input(0.0)
+
+
+# operator for regular-spiking adex neurons
+rs_op:    ## removing the exponential aspect just to check if that makes it work!?
+  base: OperatorTemplate
+  equations:
+    - "v' = (g*(v - v_r) + g * delta_T * exp((v - v_theta)/delta_T) - w + eta + I_ext + g*s_in*(E_r - v)) / C"
+    - "w' = (a*(v-v_r) - w + b * tau_w * mean(spike) ) / tau_w"
+    - "s' = -s/tau_s + spike + s_ext"
+  variables:
+    s: output(0.0)
+    v: variable(-60.0)
+    w: variable(0.0)
+    g: 30.0  
+    eta : 0.0
+    v_r: -70.6
+    delta_T: 2.0
+    v_theta: -40.0
+    tau_s: 6.0 # from gast's paper
+    E_r: 0.0
+    C: 281.0
+    a: 4.0
+    b: 80.5
+    tau_w: 144.0
+    I_ext: input(0.0)
+    s_in: input(0.0)
+    spike: input(0.0)
+    s_ext: input(0.0)
+    
+
+# operator for regular-spiking IK neurons
+adex_op:      # here we have conductances and influences of both inhib and exhib neurons but only one population is looked at 
+  base: OperatorTemplate
+  equations:
+    - "v' = (g*(v - v_r) + g*delta_T*exp((v - v_theta)/delta_T) - w + eta + I_ext + + g_e*s_e*(E_e - v) + g_i*s_i*(E_i - v)) / C"
+    - "w' = (a*(v-v_r) - w + b*tau_w*mean(spike)) / tau_w"
+    # - "s' = -s/tau_s+ (J*tau_s)*r"
+    - "s' = -s/tau_s + spike + s_ext"
+  variables:
+    s: output(0.0)
+    v: variable(-60.0)
+    w: variable(0.0)
+    C: 281.0
+    eta : 0.0
+    g: 30.0
+    v_r: -70.6
+    v_theta: -40.0
+    delta_T: 2.0
+    E_e: 0.0 # Gast # TODO not very sure how i should set this --- should i adapt it to the lower v_r of AdEx from Gerstner?
+    E_i: -70.6  # Gast
+    a: 4.0
+    b: 80.5
+    tau_w: 144.0
+    tau_s: 6.0
+    spike: input(0.0)
+    s_e: input(0.0)
+    s_i: input(0.0)
+    I_ext: input(0.0)
+    s_ext: input(0.0)
+
+# operator for regular-spiking IK neurons
+# this model has a very high potential for changing the specifications and making it more biologically plausible bu fiddling with the excitatory and inhibitory variables 
+eic_op:       ## excitatory and inhibitory populations -- set of 6 eqns
+  base: OperatorTemplate
+  equations:    # not quite sure if i should keep the delta_T the same .... so i will just have 2 variables for safety
+    - "ve' = (ge*(ve - v_r_e) + ge*delta_T_e*exp((ve - v_theta_e)/delta_T_e) - we + eta_e + I_ext_e + g_e*s_ee*(E_e - ve) + g_i*s_ei*(E_i - ve)) / C_e"
+    - "we' = (ae*(ve-v_r_e) - we + be*tau_w_e*spike_e) / tau_w_e"
+    # - "se' = -se/tau_s_e + (J*tau_s_e)*spike_e"
+    - "se' = -se/tau_s_e + spike_e + s_ext_e"
+    - "vi' = (gi*(vi - v_r_i) + gi*delta_T_i*exp((vi - v_theta_i)/delta_T_i) - wi + eta_i + I_ext_i + g_e*s_ie*(E_e - vi) + g_i*s_ii*(E_i - vi)) / C_i"
+    - "wi' = (ai*(vi-v_r_i) - wi + bi*tau_w_i*spike_i) / tau_w_i"
+    # - "si' = -si/tau_s_i + (J*tau_s_i)*spike_i"
+    - "si' = -si/tau_s_i + spike_i + s_ext_i"
+  variables:
+    ve: variable(-60.0) # double check if it should not be the same as v_r ish 
+    ge: 30.0
+    eta_e : 0.0
+    eta_i : 0.0
+    v_r_e: -70.6
+    delta_T_e: 2.0
+    v_theta_e: -40.0
+    we: variable(0.0)
+    I_ext_e: input(0.0)
+    g_e: 30.0 # check.... 
+    s_ee: input(0.0)
+    E_e: 0.0
+    g_i: 30.0
+    s_ei: input(0.0)
+    E_i: -70.6
+    C_e: 200.0
+    ae: 4.0
+    be: 80.5
+    tau_w_e: 20.0 # random -- please check for more plausible
+    spike_e: input(0.0)
+    se: output(0.0)
+    tau_s_e: 8.0 # again, check please
+    s_ext_e: input(0.0)
+    vi: variable(-60.0)
+    gi: 30.0
+    v_r_i: -70.6
+    delta_T_i: 2.0
+    v_theta_i: -40.0
+    wi: variable(0.0)
+    I_ext_i: input(0.0)
+    s_ie: input(0.0)
+    s_ii: input(0.0)
+    C_i: 200.0
+    ai: 4.0
+    bi: 80.5
+    tau_w_i: 20.0
+    spike_i: input(0.0)
+    si: output(0.0)
+    tau_s_i: 8.0
+    s_ext_i: input(0.0)
+
+# population of simplified AdEx neurons without synaptic input
+simple:
+  base: NodeTemplate
+  operators:
+    - simple_op
+
+# population of regular-spiking AdEx neurons
+rs:
+  base: NodeTemplate
+  operators:
+    - rs_op
+
+# containing 2 populations (inhibitory and excitatory input being different)
+adex:
+  base: NodeTemplate
+  operators:
+    - adex_op
+
+# population of regular-spiking AdEx neurons with both inhibitory and excitatory conductances
+# the system of 6 equations.
+eic:
+  base: NodeTemplate
+  operators:
+    - eic_op
+
