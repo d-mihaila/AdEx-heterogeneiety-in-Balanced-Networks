@@ -9,5 +9,5 @@ Alternatively, adjust the time constants and other parameters.
 Note: for the actual project, more parameters (not just the threshold) need to be heterogeneous. 
 
 
----- Reference
+
 [1] Gast, Richard, Sara A. Solla, and Ann Kennedy. "Effects of neural heterogeneity on spiking neural network dynamics." arXiv preprint arXiv:2206.08813 (2022).
