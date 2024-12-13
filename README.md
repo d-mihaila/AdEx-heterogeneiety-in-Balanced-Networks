@@ -1,7 +1,9 @@
 # AdEx-heterogeneiety-in-Balanced-Networks
 
-A working repository to look at the activity of Heterogeneous Balanced Networks of AdEx neurons compared to their Mean field.
+Repository trying to apply the Lorenzian Ansatz Mean Field approach on Adaptive Exponential LIF neurons as done by [1]. 
+I used a Taylor Expansion up to 3 terms but there is a miss-match of the parameters for ther MF so the synaptic activity blows up. 
 
-To Continue: testing on encoding and decoding task. 
+To continue: seems like AdEx cannot handle TE (becomes quadratic form) and hence maybe other MF approaches work better (transfer function etc). 
+Alternatively, adjust the time constants and other parameters. 
 
-End goal: to apply the SNNs on Neuromorphic Hardware. 
+Note: for the actual project, more parameters (not just the threshold) need to be heterogeneous. 
