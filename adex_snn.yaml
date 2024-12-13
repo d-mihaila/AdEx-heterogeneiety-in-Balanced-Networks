@@ -13,40 +13,42 @@ simple_op:
   variables:
     g: 30.0 
     eta : 0.0
-    v: variable(-60.0)
+    v: variable(-70.6)
     v_r: -70.6
     delta_T: 2.0 
-    v_theta: -40.0
+    v_theta: -50.4
     w: variable(0.0)
     I_ext: input(0.0)
     C: 281.0 
     a: 4 
-    b: 80.5 # from nA --> pA in Gernstner's book
+    b: 80.5 # pA analogous to the kappa in IK 
     tau_w: 144.0 
     spike: input(0.0)
 
 
 # operator for regular-spiking adex neurons
-rs_op:    ## removing the exponential aspect just to check if that makes it work!?
+rs_op:
   base: OperatorTemplate
   equations:
     - "v' = (g*(v - v_r) + g * delta_T * exp((v - v_theta)/delta_T) - w + eta + I_ext + g*s_in*(E_r - v)) / C"
+    # - "v' = (g*(v - v_r) + g * delta_T * (1 + v - v_theta) - w + eta + I_ext + g*s_in*(E_r - v)) / C"
+    # - "v' = (g * (v - v_r) + g * delta_T * (1 + (v - v_theta) / delta_T + (v - v_theta)^2 / (2 * delta_T^2)) - w + eta + I_ext + g * s_in * (E_r - v)) / C"
     - "w' = (a*(v-v_r) - w + b * tau_w * mean(spike) ) / tau_w"
     - "s' = -s/tau_s + spike + s_ext"
   variables:
     s: output(0.0)
-    v: variable(-60.0)
+    v: variable(-70.6)
     w: variable(0.0)
     g: 30.0  
     eta : 0.0
     v_r: -70.6
     delta_T: 2.0
-    v_theta: -40.0
+    v_theta: -50.4
     tau_s: 6.0 # from gast's paper
     E_r: 0.0
     C: 281.0
     a: 4.0
-    b: 80.5
+    b: 80.5  # pA but would be without any input from other neurons -- so should be lower in this case ! pg 140 
     tau_w: 144.0
     I_ext: input(0.0)
     s_in: input(0.0)
@@ -163,4 +165,5 @@ eic:
   base: NodeTemplate
   operators:
     - eic_op
+
 
