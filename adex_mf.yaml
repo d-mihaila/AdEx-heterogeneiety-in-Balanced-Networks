@@ -32,29 +32,31 @@ simple_op:
 adex_op:    # just the basic MF equations
   base: OperatorTemplate
   equations:
-    - "r' = (2*g*r)/ C - (2*g**2*delta_v)/(C*pi) + s*r*(1 + g)"
-    - "v' = (g*(2*v - v_r - delta_T + v_t - g*E_r*s) - I_ext + w + 2*s*v) / C"
+    - "r' = g*(2*r - 3*s*r + (2*g*delta_v)/(C*pi)) / C"
+    - "v' = (g*(2*v + v_r + delta_T + v_t - s*(r*v + E_r)) + I_ext - w) / C"
+    # - "r' = g*(2*r + s*r + (-delta_v*r - v_t)/delta_T - (r*v)/delta_T + (-2*g*delta_v)/(C*pi) * (v_t/delta_T + 1))/C "
+    # - "v' = (g*(2*v + s*v + (-delta_v*v - v_t*v)/delta_T + (v**2 - r**2*(C*pi/(2*g)))/(2*delta_T) + (v_t**2 + delta_v**2)/(2*delta_T) - v_r + delta_T - v_t + s*E_r) + I_ext - w ) /C"
     - "w' = ( a * ( v - v_r) - w + b*tau_w*r) / tau_w"
     - "s' = -s/tau_s + r_in"
   variables:    # delta_v and theta are the lorenzian ones
     r: output(0.0)
-    v: variable(-60.0)
+    v: variable(-70.6)
     w: variable(0.0)
     s: variable(0.0)
     C: 281.0
     g: 30.0
-    eta: 0.0
+    eta: 0.0 # i dont think there s any need for eta... !?
     delta_v: 0.1
-    v_r: -70.6
+    v_r: -70.6 # -70.6
     delta_T: 2.0
-    v_t: -40.0 # this is theta in my equations
+    v_t: -50.4 # this is theta in my equations
     a: 4.0
     b: 80.5
     tau_w: 144.0
     tau_s: 6.0
     E_r: 0.0
     I_ext: input(0.0)
-    r_in: input(0.0)
+    r_in: input(0.0) # this is kinda initial 
     
 #----------------------------------------------------- 
 ### this i have to still look into... 
